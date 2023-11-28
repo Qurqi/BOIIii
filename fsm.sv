@@ -20,9 +20,10 @@
 `define ADDS_sx5 5'b10011
 `define ADDL_sx5 5'b10100
 `define read_mem 5'b10101
-`define store_mem 5'b10110
+`define load_data 5'b10110
 `define write_memdata 5'b10111
-`define load_rd 5'b11000
+`define store_rd 5'b11000
+`define load_mem 5'b11001
 `define MREAD 2'b01 
 `define MWRITE  2'b10
 `define MNONE 2'b00 
@@ -125,18 +126,21 @@ module fsm(opcode, op, nsel, clk, reset, vsel, loada, loadb, asel, bsel, loadc, 
                    state = `read_mem;
 
             `read_mem :
+                    state = `load_mem;
+
+            `load_mem :
                     state = `write_memdata;
 
             `write_memdata :
                     state = `IF1;
 
             `ADDS_sx5 :
-                   state = `store_mem;
+                   state = `load_data;
 
-            `store_mem :
-                    state = `load_rd;
+            `load_data :
+                    state = `store_rd;
 
-            `load_rd :
+            `store_rd :
                     state = `IF1;
 
             `HALT :
@@ -239,70 +243,89 @@ module fsm(opcode, op, nsel, clk, reset, vsel, loada, loadb, asel, bsel, loadc, 
             
         `MVN: 
           begin
+            
             //undo last states
             loadb = 1'b0;
+            
             //setting this states gates
             asel = 1'b0;
             bsel = 1'b0;
             loadc = 1'b1;
             loads = 1'b1;
+          
           end
             
         `WriteReg: //write reg
           begin
+            
             //undo last states
             loadc = 1'b0;
+            
             //setting this states gates
             nsel = 3'b010;
             vsel = 4'b0001;
             write = 1'b1;
+          
           end
 
 //MOV---
         `MOVimm: //MOVimm
           begin
+            
             //setting this states gates
             nsel = 3'b100;
             vsel = 4'b0100;
             write = 1'b1;
+          
           end
 
         `MOV.1: //MOV.1 -into b
           begin
+            
             //undo last states
             write = 1'b0;
+            
             //setting this states gates
             nsel = 3'b001;
-	    loadb = 1'b1;
+	        loadb = 1'b1;
+          
           end
 	    
 	`MOV.2: //MOV.2 -into c/datapathout
           begin
+            
             //undo last states
             loadb = 1'b0;
+            
             //setting this states gates
             asel = 1'b1;
             bsel = 1'b0;
             loadc = 1'b1;
+
           end
 
 	`MOV.3: //MOV.3 -into reg
           begin
-	    //undo last states
+	    
+            //undo last states
             loadc = 1'b0;
+            
             //setting this states gates
             nsel = 3'b010;
             vsel = 4'b0001;
             write = 1'b1;
+
           end
 
 //PC MODIFICATION STATES
 
     `IF1: //IF1
           begin
+
             //undo previous states
             reset_pc = 1'b0;
             load_pc = 1'b0;
+
             //set new inputs
             addr_sel = 1'b1;
             mem_cmd = `MREAD;
@@ -318,12 +341,14 @@ module fsm(opcode, op, nsel, clk, reset, vsel, loada, loadb, asel, bsel, loadc, 
 
           end
 
-     `UpdatePC: //UpdatePC
+     `UpdatePC: 
           begin
+
             //undo previous state inputs
             mem_cmd = `MNONE;
             load_ir = 1'b0;
             addr_sel = 1'b0;
+
             //new inputs
             load_pc = 1'b1;
 
@@ -334,24 +359,25 @@ module fsm(opcode, op, nsel, clk, reset, vsel, loada, loadb, asel, bsel, loadc, 
      `LDR: 
           begin
             
-          nsel = 3'b100; //load Rn
-          loada = 1'b1; // loada high so on next clock it will load up to the multiplexer
-          loadb = 1'b0; // dont load into b
+          nsel = 3'b100; //Load Rn
+          loada = 1'b1; //Loada high so on next clock it will load up to the asel multiplexer
+          loadb = 1'b0; //Dont load into b
 
           end
 
     `STR: 
           begin
             
-          nsel = 3'b100;
-          loada = 1'b1;
-          loadb = 1'b0;
+          nsel = 3'b100; //Load Rn
+          loada = 1'b1; //Loada high so on next clock it will load up to the asel multiplexer
+          loadb = 1'b0; //Dont load into b
 
           end
     
-    `ADDL_sx5: //output the sum of Rn and sx5 LOADS ADDRESS
+    `ADDL_sx5: 
           begin
 
+            //Output the sum of Rn and sx5 LOADS ADDRESS
             loada = 1'b0; // Since a is already loaded, turn this low
             asel = 1'b0; // Load Rn value
             bsel = 1'b1; // Load imm5
@@ -361,12 +387,11 @@ module fsm(opcode, op, nsel, clk, reset, vsel, loada, loadb, asel, bsel, loadc, 
 
     `ADDS_sx5: // LOADS ADDRESS
           begin
-
-            loadb = 1'b0;
-            loada = 1'b0;
-            asel = 1'b0;
-            bsel = 1'b1;
-            loadc = 1'b1; 
+   
+           loada = 1'b0; //Since a is already loaded, turn this low
+            asel = 1'b0; //Load Rn value
+            bsel = 1'b1; //Load imm5
+            loadc = 1'b1; //Load the sum of a and b on the next clock cycle
 
           end
     
@@ -375,43 +400,47 @@ module fsm(opcode, op, nsel, clk, reset, vsel, loada, loadb, asel, bsel, loadc, 
           begin
 
             mem_cmd = `MNONE; //Do nothing for now 
-            load_addr = 1'b1; // Load the memory address into the register on the next clock cycle
+            load_addr = 1'b1; //Load the memory address into the address register on the next clock cycle
             addr_sel = 1'b0; //Select the new address on the next clock cycle
-            vsel = 4'b1000; //prep m data to hold M[Rn + imm5]
-            loadc = 1'b0; //dont load val at C
-            nsel = 3'b010; //select Rd for loading
-            vsel = 4'b1000; // Select mdata to write into Rd
+            loadc = 1'b0; //Dont load val at C
+            nsel = 3'b010; //Select Rd for loading
+            vsel = 4'b1000; //Select mdata to write into Rd
             
           end
 
     `load_mem :
             begin
 
-            mem_cmd = `MREAD; //Read specified address 
-            load_addr = 1'b0; //
+            mem_cmd = `MREAD; //Read specified address on next clock cycle
+            load_addr = 1'b0; //dont load datapath_out value
 
             end
 
-    `store_mem: // stores memory address for later writing
+    `load_data: 
             begin
 
-            mem_cmd = `MNONE;
-            load_addr = 1'b1;
-            addr_sel = 1'b0;
-            vsel = 3'b010;
-            loada = 1'b0;
-            loadb = 1'b1;
-            bsel = 1'b0;
-            asel = 1'b1;
+            mem_cmd = `MNONE; //Do nothing for now
+            load_addr = 1'b1; //Load the address on the next clock cycle
+            addr_sel = 1'b0; //Select the new memory address on the next clock cycle
+            nsel = 3'b010; //Select Rd to load data from
+
+            //Setup vsel mux, a selector block, b selector block, a mux, b mux for when datapath_out has Rd value
+
+            vsel = 4'b0001; //Load the value of datapath_out
+            loada = 1'b0; //Dont load a
+            loadb = 1'b1; //Load b (Note: cpu sets shifter to zero if STR instruction is selected)
+            bsel = 1'b0; //Select b value from mux
+            asel = 1'b1; //Select 16'd0 from mux
+            loadc = 1'b1; //Load Rd value to datapath_out
 
             end
 
-    `load_rd: //STR Rd in mem
+    `store_rd: //STR Rd in mem
         begin
 
-        mem_cmd = `MWRITE;
-        loadc = 1'b1;
-        load_addr = 1'b0;
+        mem_cmd = `MWRITE; // Write Rd to mem on next clk cycle
+        loadc = 1'b0; // Load Rd value into datapath_out
+        load_addr = 1'b0; //Dont load addr. The required address is already loaded. Also done to avoid loading the value of Rd
 
         end
          
@@ -419,14 +448,9 @@ module fsm(opcode, op, nsel, clk, reset, vsel, loada, loadb, asel, bsel, loadc, 
     `write_memdata:
         begin
 
-        write = 1'b1;
+        write = 1'b1; // write mdata to Rd on next clock cycle
 
         end
-        
-
-
-
-
 
         //setting all gates to x if not in 'real' state
 	default: {mem_cmd, loadA, loadb, asel, bsel, loadc, loads, load_ir, write, addr_sel, load_pc, load_ir, reset_pc, nsel, vsel} = 21'bxxxxxxxxxxxxxxxxxxxxx;
