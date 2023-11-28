@@ -18,7 +18,7 @@ module lab7_top( mem_cmd, mem_addr, read_data, write_data )
 
 	reg [7:0] LEDR;
 
-	cpu CPU(clk, reset, load, in, out, N, V, Z, read_data, mem_addr, mem_cmd, read_data, write_data);
+	cpu CPU(clk, reset, load, in, N, V, Z, read_data, mem_addr, mem_cmd, read_data, write_data);
 	
 	RAM MEM(clk, read_address, write_address, write, din, dout);
 
