@@ -39,9 +39,11 @@ module fsm(opcode, op, nsel, clk, reset, vsel, loada, loadb, asel, bsel, loadc, 
   output [3:0] vsel;
   output [1:0] mem_cmd;
 
-  reg loada, loadb, asel, bsel, loadc, loads, write;
+  reg loada, loadb, asel, bsel, loadc, loads, write, reset_pc, load_ir, load_pc, addr_sel, load_addr;
+  reg [1:0] mem_cmd;
   reg [2:0] nsel;
-  reg [3:0] vsel, state;
+  reg [3:0] vsel;
+  reg [4:0] state;
 
 
   always_ff @(posedge clk)
@@ -157,7 +159,7 @@ module fsm(opcode, op, nsel, clk, reset, vsel, loada, loadb, asel, bsel, loadc, 
     begin
       
       //to avoid inferred latch
-      {mem_cmd, loada, loadb, asel, bsel, loadc, loads, load_ir, write, addr_sel, load_pc, load_ir, reset_pc, nsel, vsel} = 21'b000000000000000000000; 
+      {mem_cmd, loada, loadb, load_addr, asel, bsel, loadc, loads, load_ir, write, addr_sel, load_pc, load_ir, reset_pc, nsel, vsel} = 22'b0000000000000000000000; 
       
       case(state)
         
