@@ -8,9 +8,9 @@
 `define MVN  5'b00111
 `define WriteReg  5'b01000
 `define MOVimm 5'b01001 
-`define MOV.1 5'b01010 
-`define MOV.2 5'b01011 
-`define MOV.3 5'b01100 
+`define MOV1 5'b01010 
+`define MOV2 5'b01011 
+`define MOV3 5'b01100 
 `define IF1 5'b01101 
 `define IF2 5'b01110 
 `define UpdatePC 5'b01111 
@@ -31,12 +31,13 @@
 module fsm(opcode, op, nsel, clk, reset, vsel, loada, loadb, asel, bsel, loadc, loads, write, load_pc, reset_pc, load_ir, addr_sel, mem_cmd, load_addr);
 
   input reset, clk;
-  input [1:0] op, mem_cmd;
+  input [1:0] op;
   input [2:0] opcode;
 
   output loada, loadb, asel, bsel, loadc, loads, load_ir, write, addr_sel, load_pc, reset_pc, load_addr;
   output [2:0] nsel;
   output [3:0] vsel;
+  output [1:0] mem_cmd;
 
   reg loada, loadb, asel, bsel, loadc, loads, write;
   reg [2:0] nsel;
@@ -57,7 +58,7 @@ module fsm(opcode, op, nsel, clk, reset, vsel, loada, loadb, asel, bsel, loadc, 
               casex({opcode, op})
 
                 5'b11010 : state = `MOVimm;
-                5'b11000 : state = `MOV.1;
+                5'b11000 : state = `MOV1;
                 5'b101xx : state = `getA;
                 5'b01100 : state = `LDR;
                 5'b10000 : state = `STR;
@@ -98,13 +99,13 @@ module fsm(opcode, op, nsel, clk, reset, vsel, loada, loadb, asel, bsel, loadc, 
             `MOVimm: 
               state = `IF1;
             
-            `MOV.1: 
-              state = `MOV.2;
+            `MOV1: 
+              state = `MOV2;
             
-            `MOV.2: 
-              state = `MOV.3;
+            `MOV2: 
+              state = `MOV3;
             
-            `MOV.3: 
+            `MOV3: 
               state = `IF1;
             
             `IF1:
@@ -156,7 +157,7 @@ module fsm(opcode, op, nsel, clk, reset, vsel, loada, loadb, asel, bsel, loadc, 
     begin
       
       //to avoid inferred latch
-      {mem_cmd, loadA, loadb, asel, bsel, loadc, loads, load_ir, write, addr_sel, load_pc, load_ir, reset_pc, nsel, vsel} = 21'b000000000000000000000; 
+      {mem_cmd, loada, loadb, asel, bsel, loadc, loads, load_ir, write, addr_sel, load_pc, load_ir, reset_pc, nsel, vsel} = 21'b000000000000000000000; 
       
       case(state)
         
@@ -279,7 +280,7 @@ module fsm(opcode, op, nsel, clk, reset, vsel, loada, loadb, asel, bsel, loadc, 
           
           end
 
-        `MOV.1: //MOV.1 -into b
+        `MOV1: //MOV.1 -into b
           begin
             
             //undo last states
@@ -291,7 +292,7 @@ module fsm(opcode, op, nsel, clk, reset, vsel, loada, loadb, asel, bsel, loadc, 
           
           end
 	    
-	`MOV.2: //MOV.2 -into c/datapathout
+		  `MOV2: //MOV.2 -into c/datapathout
           begin
             
             //undo last states
@@ -304,7 +305,7 @@ module fsm(opcode, op, nsel, clk, reset, vsel, loada, loadb, asel, bsel, loadc, 
 
           end
 
-	`MOV.3: //MOV.3 -into reg
+		  `MOV3: //MOV.3 -into reg
           begin
 	    
             //undo last states
@@ -453,7 +454,7 @@ module fsm(opcode, op, nsel, clk, reset, vsel, loada, loadb, asel, bsel, loadc, 
         end
 
         //setting all gates to x if not in 'real' state
-	default: {mem_cmd, loadA, loadb, asel, bsel, loadc, loads, load_ir, write, addr_sel, load_pc, load_ir, reset_pc, nsel, vsel} = 21'bxxxxxxxxxxxxxxxxxxxxx;
+	default: {mem_cmd, loada, loadb, asel, bsel, loadc, loads, load_ir, write, addr_sel, load_pc, load_ir, reset_pc, nsel, vsel} = 21'bxxxxxxxxxxxxxxxxxxxxx;
         
       endcase
     end
