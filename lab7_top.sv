@@ -9,7 +9,9 @@ module lab7_top( mem_cmd, mem_addr, read_data, write_data )
 	input [1:0] mem_cmd, KEY;
 
 	wire [15:0]  read_data, din:
-	wire[7:0] write_address, read_address;
+	wire [7:0] write_address, read_address, read_data, write_data;
+	wire [8:0] mem_addr;
+	wire [1:0] mem_cmd;
 	wire reset, clk, msel, write;
 
 	output [7:0] , SW, LEDR;
@@ -24,8 +26,7 @@ module lab7_top( mem_cmd, mem_addr, read_data, write_data )
 
 	assign reset = ~ KEY[1]
 
-
-	assign din = write_data
+	assign din = write_data;
 
 	assign write_address = mem_addr;
 
