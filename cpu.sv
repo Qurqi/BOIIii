@@ -36,17 +36,16 @@ output N, V, Z:
 
 ////////////////////////////////////////////////////  DEFINE AND INSTANTIATE INSTRUCTION FLIP-FLOP  /////////////////////////////////////////////////////////////////////////////////////
 
-vDFF #16 INS_R(clk, Din, ins);
-
-assign Din = (load ? in : ins);
+  vDFF #16 INS_R(clk, Din, ins);
+  assign Din = (load_ir ? read_data : ins);
 
 ////////////////////////////////////////////////////  INSTANTIATE DECODER, FSM, AND DATAPATH  ///////////////////////////////////////////////////////////////////////////////////////////
 
-  ins_decoder DCDR(ins, nsel, ALUop, sximm5, sximm8, shift, readnum, writenum, opcode, op);
+  ins_decoder DCDR (ins, nsel, ALUop, sximm5, sximm8, shift, readnum, writenum, opcode, op);
 
-  fsm SM(opcode, op, nsel, clk, reset, vsel, loada, loadb, asel, bsel, loadc, loads, write,    load_ir, addr_sel, reset_pc, mem_cmd); ///still need too update
+  fsm SM (opcode, op, nsel, clk, reset, vsel, loada, loadb, asel, bsel, loadc, loads, write, load_ir, addr_sel, reset_pc, mem_cmd); ///still need too update
 
-  datapath DP(clk, readnum, vsel, loada, loadb, shift, asel, bsel, ALUop, loadc, loads, writenum, write, Z_out, N_out, V_out, datapath_out, sximm8, sximm5, PC, mdata);
+  datapath DP (clk, readnum, vsel, loada, loadb, shift, asel, bsel, ALUop, loadc, loads, writenum, write, Z_out, N_out, V_out, datapath_out, sximm8, sximm5, PC, mdata);
 
 ////////////////////////////////////////////////////  FIN  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
 
