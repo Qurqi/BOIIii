@@ -12,13 +12,13 @@
 `define ST12 4'b1100 //MOV.2
 `define ST13 4'b1101 //MOV.3
 
-module cpu(clk, reset, load, in, out, N, V, Z, w, read_data );
+module cpu(clk, reset, load, in, out, N, V, Z, w, read_data, mem_addr, mem_cmd, read_data, write_data);
 input clk, reset, s, load;
 input [15:0] in;
 
 output [15:0] out, read_data, write_data;
 Output [8:0] mem_addr
-Output [1:0]  mem_cmd;
+Output [1:0] mem_cmd;
 output N, V, Z, w;
 
   
