@@ -12,7 +12,7 @@
 `define ST12 4'b1100 //MOV.2
 `define ST13 4'b1101 //MOV.3
 
-module cpu(clk, reset, load, in, out, N, V, Z, read_data, mem_addr, mem_cmd, read_data, write_data);
+module cpu(clk, reset, load, in, N, V, Z, read_data, mem_addr, mem_cmd, read_data, write_data);
 input clk, reset, load;
 input [15:0] in;
 
@@ -50,7 +50,7 @@ assign Din = (load ? in : ins);
 
 ////////////////////////////////////////////////////  FIN  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
 
-assign out = datapath_out;
+assign write_data = datapath_out;
 
 assign N = N_out;
 
