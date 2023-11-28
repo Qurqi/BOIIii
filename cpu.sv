@@ -1,16 +1,32 @@
-`define ST1  4'b0000 //wait
-`define ST2  4'b0001 //decode
-`define ST3  4'b0010 //getA
-`define ST4  4'b0011 //getB
-`define ST5  4'b0100 //ADD
-`define ST6  4'b0101 //CMP
-`define ST7  4'b0110 //AND
-`define ST8  4'b0111 //MVN
-`define ST9  4'b1000 //write reg
-`define ST10 4'b1001 //MOVimm
-`define ST11 4'b1011 //MOV.1
-`define ST12 4'b1100 //MOV.2
-`define ST13 4'b1101 //MOV.3
+`define RST  5'b00000 
+`define DECODE  5'b00001 
+`define getA  5'b00010
+`define getB  5'b00011 
+`define ADD  5'b00100 
+`define CMP  5'b00101 
+`define AND  5'b00110
+`define MVN  5'b00111
+`define WriteReg  5'b01000
+`define MOVimm 5'b01001 
+`define MOV1 5'b01010 
+`define MOV2 5'b01011 
+`define MOV3 5'b01100 
+`define IF1 5'b01101 
+`define IF2 5'b01110 
+`define UpdatePC 5'b01111 
+`define LDR 5'b10000
+`define STR 5'b10001
+`define HALT 5'b10010
+`define ADDS_sx5 5'b10011
+`define ADDL_sx5 5'b10100
+`define read_mem 5'b10101
+`define load_data 5'b10110
+`define write_memdata 5'b10111
+`define store_rd 5'b11000
+`define load_mem 5'b11001
+`define MREAD 2'b01 
+`define MWRITE  2'b10
+`define MNONE 2'b00 
 
 module cpu(clk, reset, load, N, V, Z, read_data, mem_addr, mem_cmd, read_data, write_data);
 input clk, reset, load;
@@ -39,7 +55,7 @@ output N, V, Z:
   vDFF #16 INS_R(clk, Din, ins);
   assign Din = (load_ir ? read_data : ins);
 
-////////////////////////////////////////////////////  INSTANTIATE DECODER, FSM, AND DATAPATH  ///////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////  INSTANTIATE DECODER, FSM, DATAPATH AND MEMORY  ///////////////////////////////////////////////////////////////////////////////////////////
 
   ins_decoder DCDR (ins, nsel, ALUop, sximm5, sximm8, shift, readnum, writenum, opcode, op);
 
