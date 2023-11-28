@@ -12,7 +12,7 @@
 `define ST12 4'b1100 //MOV.2
 `define ST13 4'b1101 //MOV.3
 
-module cpu(clk, reset, s, load, in, out, N, V, Z, w, read_data, );
+module cpu(clk, reset, s, load, in, out, N, V, Z, w, read_data );
 input clk, reset, s, load;
 input [15:0] in;
 
