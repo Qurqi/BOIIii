@@ -14,18 +14,18 @@
 
 module cpu(clk, reset, load, in, N, V, Z, read_data, mem_addr, mem_cmd, read_data, write_data);
 input clk, reset, load;
-input [15:0] in;
+input [15:0] in, read_data;
 
-output [15:0] out, read_data, write_data;
-Output [8:0] mem_addr
-Output [1:0] mem_cmd;
+output [15:0] out, write_data;
+output [8:0] mem_addr
+output [1:0] mem_cmd;
 output N, V, Z:
 
   
 /////////////////////////////////////////////////////  DECLARE I/O FOR MODULES  ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
   wire loada, loadb, asel, bsel, loadc, loads, write, clk, reset, load_ir, Z_out, N_out, V_out, N, V, Z, addr_sel, load_pc, load_addr, reset_pc;
-  wire [1:0] ALUop, shift, op;
+	wire [1:0] ALUop, shift, op, mem_cmd;
   wire [2:0] readnum, writenum, nsel, opcode;
   wire [3:0] vsel;
   wire [15:0] in, ins, sximm5, sximm8, datapath_out, out;
@@ -51,6 +51,8 @@ assign Din = (load ? in : ins);
 ////////////////////////////////////////////////////  FIN  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
 
 assign write_data = datapath_out;
+
+assign mdata = read_data;
 
 assign N = N_out;
 
