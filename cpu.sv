@@ -25,7 +25,7 @@ output N, V, Z:
 /////////////////////////////////////////////////////  DECLARE I/O FOR MODULES  ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
   wire loada, loadb, asel, bsel, loadc, loads, write, clk, reset, load_ir, Z_out, N_out, V_out, N, V, Z, addr_sel, load_pc, load_addr, reset_pc;
-	wire [1:0] ALUop, shift, op, mem_cmd;
+  wire [1:0] ALUop, shift, op, mem_cmd;
   wire [2:0] readnum, writenum, nsel, opcode;
   wire [3:0] vsel;
   wire [15:0] in, ins, sximm5, sximm8, datapath_out, out;
