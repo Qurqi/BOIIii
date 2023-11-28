@@ -46,7 +46,7 @@ assign Din = (load ? in : ins);
 
   fsm SM(opcode, op, nsel, clk, reset, s, w, vsel, loada, loadb, asel, bsel, loadc, loads, write,    load_ir, addr_sel, reset_pc, mem_cmd);
 
-  datapath DP(clk, readnum, vsel, loada, loadb, shift, asel, bsel, ALUop, loadc, loads, writenum, write, Z_out, N_out, V_out, datapath_out, sximm8, sximm5, PC);
+	datapath DP(clk, readnum, vsel, loada, loadb, shift, asel, bsel, ALUop, loadc, loads, writenum, write, Z_out, N_out, V_out, datapath_out, sximm8, sximm5, PC, mdata);
 
 ////////////////////////////////////////////////////  FIN  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
 
