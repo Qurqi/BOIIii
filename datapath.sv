@@ -1,4 +1,4 @@
-module datapath(clk, readnum, vsel, loada, loadb, shift, asel, bsel, ALUop, loadc, loads, writenum, write, Z_out, N_out, V_out, datapath_out, sximm8, sximm5, PC);
+module datapath(clk, readnum, vsel, loada, loadb, shift, asel, bsel, ALUop, loadc, loads, writenum, write, Z_out, N_out, V_out, datapath_out, sximm8, sximm5, PC, mdata);
 
 //Declare all inputs and outputs
 
@@ -12,7 +12,7 @@ input [2:0] writenum, readnum;
 
 input [7:0] PC;
 
-input [15:0] sximm8, sximm5;
+input [15:0] sximm8, sximm5, mdata;
 
 output [15:0] datapath_out;
 
@@ -20,7 +20,7 @@ output Z_out, N_out, V_out;
 
 //Declare all internal signals
 
-wire [15:0] data_out, Da, Qb, Db, Dc, sout, Ain, Bin, out, mdata;
+wire [15:0] data_out, Da, Qb, Db, Dc, sout, Ain, Bin, out;
 
 wire Z, N, V, Dz, Dn, Dv;
 
@@ -30,7 +30,6 @@ reg [15:0] Qa, in, datapath_out, data_in;
 
 reg Z_out, N_out, V_out;
 
-assign mdata = 16'd0;
 
 //Write code for Multiplexer 
 
