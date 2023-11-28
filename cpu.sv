@@ -12,7 +12,7 @@
 `define ST12 4'b1100 //MOV.2
 `define ST13 4'b1101 //MOV.3
 
-module cpu(clk, reset, s, load, in, out, N, V, Z, w, read_data );
+module cpu(clk, reset, load, in, out, N, V, Z, w, read_data );
 input clk, reset, s, load;
 input [15:0] in;
 
@@ -24,7 +24,7 @@ output N, V, Z, w;
   
 /////////////////////////////////////////////////////  DECLARE I/O FOR MODULES  ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  wire loada, loadb, asel, bsel, loadc, loads, write, clk, reset, s, load_ir, w, Z_out, N_out, V_out, N, V, Z, addr_sel, load_pc, load_addr, reset_pc;
+  wire loada, loadb, asel, bsel, loadc, loads, write, clk, reset, load_ir, Z_out, N_out, V_out, N, V, Z, addr_sel, load_pc, load_addr, reset_pc;
   wire [1:0] ALUop, shift, op;
   wire [2:0] readnum, writenum, nsel, opcode;
   wire [3:0] vsel;
@@ -44,9 +44,9 @@ assign Din = (load ? in : ins);
 
   ins_decoder DCDR(ins, nsel, ALUop, sximm5, sximm8, shift, readnum, writenum, opcode, op);
 
-  fsm SM(opcode, op, nsel, clk, reset, s, w, vsel, loada, loadb, asel, bsel, loadc, loads, write,    load_ir, addr_sel, reset_pc, mem_cmd);
+  fsm SM(opcode, op, nsel, clk, reset, vsel, loada, loadb, asel, bsel, loadc, loads, write,    load_ir, addr_sel, reset_pc, mem_cmd); ///still need too update
 
-	datapath DP(clk, readnum, vsel, loada, loadb, shift, asel, bsel, ALUop, loadc, loads, writenum, write, Z_out, N_out, V_out, datapath_out, sximm8, sximm5, PC, mdata);
+  datapath DP(clk, readnum, vsel, loada, loadb, shift, asel, bsel, ALUop, loadc, loads, writenum, write, Z_out, N_out, V_out, datapath_out, sximm8, sximm5, PC, mdata);
 
 ////////////////////////////////////////////////////  FIN  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
 
