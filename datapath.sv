@@ -10,7 +10,7 @@ input [1:0] shift, ALUop;
 
 input [2:0] writenum, readnum;
 
-input [7:0] PC;
+input [8:0] PC;
 
 input [15:0] sximm8, sximm5, mdata;
 
