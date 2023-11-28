@@ -28,11 +28,9 @@ output N, V, Z, w;
   wire [1:0] ALUop, shift, op;
   wire [2:0] readnum, writenum, nsel, opcode;
   wire [3:0] vsel;
-  wire [8:0] PC, DA;
-  Wire [8:0] mem_addr
-  wire [15:0] in, ins, sximm5, sximm8, datapath_out, out, Din;
+  wire [15:0] in, ins, sximm5, sximm8, datapath_out, out;
 
-  Reg [8:0] PC, DA;
+  reg [8:0] PC, DA, mem_addr, next_pc;
   
   assign PC = 8'd0;
 
@@ -77,7 +75,5 @@ always_comb
 		if(addr_sel) mem_addr = PC;
 		else next_pc = DA;
 	end	
-
-
 
 endmodule
