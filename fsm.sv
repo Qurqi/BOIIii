@@ -387,10 +387,15 @@ module fsm(opcode, op, nsel, clk, reset, vsel, loada, loadb, asel, bsel, loadc, 
     `ADDS_sx5: // LOADS ADDRESS
           begin
    
-           loada = 1'b0; //Since a is already loaded, turn this low
+           loada = 1'b0;
+		 //Since a is already loaded, turn this low
             asel = 1'b0; //Load Rn value
             bsel = 1'b1; //Load imm5
             loadc = 1'b1; //Load the sum of a and b on the next clock cycle
+	    nsel = 3'b010; //Select Rd to load data from
+            loada = 1'b0; //Dont load a
+            loadb = 1'b1; //Load b (Note: cpu sets shifter to zero if STR instruction is selected)
+             
 
           end
     
@@ -425,7 +430,6 @@ module fsm(opcode, op, nsel, clk, reset, vsel, loada, loadb, asel, bsel, loadc, 
 
             //Setup vsel mux, a selector block, b selector block, a mux, b mux for when datapath_out has Rd value
 
-            vsel = 4'b0001; //Load the value of datapath_out
             loada = 1'b0; //Dont load a
             loadb = 1'b1; //Load b (Note: cpu sets shifter to zero if STR instruction is selected)
             bsel = 1'b0; //Select b value from mux
@@ -440,6 +444,12 @@ module fsm(opcode, op, nsel, clk, reset, vsel, loada, loadb, asel, bsel, loadc, 
         mem_cmd = `MWRITE; // Write Rd to mem on next clk cycle
         loadc = 1'b0; // Load Rd value into datapath_out
         load_addr = 1'b0; //Dont load addr. The required address is already loaded. Also done to avoid loading the value of Rd
+	vsel = 4'b0001; //Load the value of datapath_out
+            loada = 1'b0; //Dont load a
+            loadb = 1'b1; //Load b (Note: cpu sets shifter to zero if STR instruction is selected)
+            bsel = 1'b0; //Select b value from mux
+            asel = 1'b1; //Select 16'd0 from mux
+            loadc = 1'b1; //Load Rd value to datapath_out
 
         end
          
@@ -450,6 +460,7 @@ module fsm(opcode, op, nsel, clk, reset, vsel, loada, loadb, asel, bsel, loadc, 
         write = 1'b1; // write mdata to Rd on next clock cycle
 	nsel = 3'b010; //Select Rd for loading
         vsel = 4'b1000; //Select mdata to write into Rd
+	mem_cmd = `MREAD;
 
         end
 
