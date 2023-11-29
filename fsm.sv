@@ -348,10 +348,6 @@ module fsm(opcode, op, nsel, clk, reset, vsel, loada, loadb, asel, bsel, loadc, 
           begin
 
             //undo previous state inputs
-            mem_cmd = `MNONE;
-            load_ir = 1'b0;
-            addr_sel = 1'b0;
-
             //new inputs
             load_pc = 1'b1;
 

@@ -81,6 +81,7 @@ module lab7_top(KEY, SW, LEDR, HEX0,HEX1,HEX2,HEX3,HEX4,HEX5);
   
   assign HEX4 = 7'b1111111;
   assign {HEX5[2:1],HEX5[5:4]} = 4'b1111; // disabled
+ 
 
 	cpu CPU(clk, reset, load, N, V, Z, read_data, write_data, mem_cmd, mem_addr);
 	
@@ -96,13 +97,13 @@ module lab7_top(KEY, SW, LEDR, HEX0,HEX1,HEX2,HEX3,HEX4,HEX5);
 
 	assign read_address = write_address;
 
-	assign msel = (1'b0 == mem_addr[8]);
+	assign msel = (1'b0 == mem_addr[8:8]);
 
 	assign write = (msel && (`MWRITE == mem_cmd));  		
 
 	assign read_data = (( msel && (`MREAD == mem_cmd)) ? dout : {16{1'bz}});     
 
-	assign read_data = ({ mem_cmd, mem_addr} == {`MREAD, 9'h140}) ? {8'h00, SW[7:0]} : {16{1'bz}};
+	assign read_data = ( ( {mem_cmd, mem_addr} == {`MREAD, 9'h140} ) ? ({8'h00, SW[7:0]}) : ({16{1'bz}}) );
 
 
 	always_ff@(posedge clk)
