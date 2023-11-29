@@ -448,6 +448,8 @@ module fsm(opcode, op, nsel, clk, reset, vsel, loada, loadb, asel, bsel, loadc, 
         begin
 
         write = 1'b1; // write mdata to Rd on next clock cycle
+	nsel = 3'b010; //Select Rd for loading
+        vsel = 4'b1000; //Select mdata to write into Rd
 
         end
 
