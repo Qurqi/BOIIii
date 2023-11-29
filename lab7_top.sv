@@ -96,7 +96,7 @@ module lab7_top(KEY, SW, LEDR, HEX0,HEX1,HEX2,HEX3,HEX4,HEX5);
 
 	assign read_address = write_address;
 
-	assign msel = (1'b1 == mem_addr[8:8]);
+	assign msel = (1'b0 == mem_addr[8]);
 
 	assign write = (msel && (`MWRITE == mem_cmd));  		
 
